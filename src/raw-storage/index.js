@@ -1,10 +1,14 @@
 // src/raw-storage/index.js
 // Raw Storage Models 통합 엔트리 포인트
+// Bitget API의 원본 응답을 보존하기 위한 저장소(Mongoose Schema) 모음
+// - BitgetFillsRaw: 체결(fill) 응답 원본
+// - BitgetOrdersRaw: 주문(order) 응답 원본
+// - BitgetPositionsRaw: 포지션(position) 응답 원본
 
 import crypto from "crypto";
-import BitgetFillsRaw from "./bitget-fills-raw";
-import BitgetOrdersRaw from "./bitget-orders-raw";
-import BitgetPositionsRaw from "./bitget-positions-raw";
+import BitgetFillsRaw from "./BitgetFillsRaw";
+import BitgetOrdersRaw from "./BitgetOrdersRaw";
+import BitgetPositionsRaw from "./BitgetPositionsRaw";
 
 export { BitgetFillsRaw, BitgetOrdersRaw, BitgetPositionsRaw };
 
