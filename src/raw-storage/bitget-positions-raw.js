@@ -1,5 +1,6 @@
-// src/raw-storage/BitgetPositionsRaw.js
-// Bitget 포지션(raw position) 응답을 변환 없이 저장하여 백필/진단 파이프라인에서 재활용하기 위한 스키마
+// src/raw-storage/bitget-positions-raw.js
+// Bitget Positions Raw Storage Model
+// API 응답을 변환 없이 그대로 저장
 
 import mongoose from "mongoose";
 
