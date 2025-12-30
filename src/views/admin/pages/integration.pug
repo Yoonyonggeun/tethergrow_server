@@ -1,0 +1,154 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      .admin__page#admin__integration-page
+        .layout-wrapper.layout-content-navbar
+          .layout-container
+            //- BEGIN: Sidebar menu
+            include ../partials/adminSidebar
+            //- END: Sidebar menu
+            //- BEGIN: Layout container
+            .layout-page
+              //- BEGIN: Navbar
+              include ../partials/adminNavbar
+              //- END: Navbar
+              //- BEGIN: Content wrapper
+              .content-wrapper
+                //- BEGIN: Content
+                .container-xxl.flex-grow-1.container-p-y
+                  h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} 관리`
+                    span.text-muted 내용이 보이지 않을 시 좌우로 스크롤 해보세요.
+                  .row
+                    .content-body
+                      //- BEGIN: Basic Tables
+                      #basic-table.row
+                        .col-12
+                          .card(style="overflow: scroll;")
+                            //- BEGIN: Top button collections
+                            .top__btn-items.card-body.pb-2
+                              .top__btn-items-wrap
+                                //- BEGIN: Search bar section
+                                .top__btn-item.top__btn-item-search
+                                  form.needs-validation(method="GET")
+                                    .input-group
+                                      select#basicSelect.form-control(name="searchKey")
+                                        each option in searchArr
+                                          if option.code === searchKey
+                                            option(value=option.code selected)=option.title
+                                          else
+                                            option(value=option.code)=option.title
+                                      input.form-control(type='search' name="searchValue" placeholder='검색어를 입력하세요...' value=searchValue aria-describedby='button-addon2')
+                                      #button-addon2.input-group-append
+                                        button.btn.btn-dark.waves-effect.search__btn(type="submit") 검색
+                                //- END: Search bar section
+                              .top__btn-items-wrap
+                                //- BEGIN: Excel download button section
+                                .top__btn-item.top__btn-item-excel
+                                  button#excel__download-btn.btn.btn-secondary.buttons-collection.waves-effect.waves-light(type='button' name=`${adminNameKo}`)
+                                    i.ti.ti-file-export.me-1
+                                    | 엑셀 다운로드
+                                  table#tableData(style='display: none;')
+                                    thead
+                                      tr
+                                        th 번호
+                                        th 상태
+                                        th 회원 아이디
+                                        th UID
+                                        th 거래소이름(한글)
+                                        th 거래소이름(영어)
+                                        th 신청일
+                                        th 수정일
+                                    tbody
+                                      each item, index in excelData
+                                        tr
+                                          td=index + 1
+                                          td=`${item.status === "approved" ? "승인 완료" : item.status === "rejected" ? "승인 거절" : "처리 대기"}`
+                                          td=item.exchangeID.nameKo
+                                          td=item.exchangeID.nameEn
+                                          td=item.uidID.uid
+                                          td=item.userID ? item.userID.userID : "탈퇴 회원"
+                                          td=dateFormatYMDHm(item.createdAt)
+                                          td=dateFormatYMDHm(item.updatedAt)
+                                //- END: Excel download button section
+                              .top__btn-items-wrap
+                                //- BEGIN: Sort link section
+                                .top__btn-item.top__btn-item-sort
+                                  ul.sorting__items
+                                    each sortItem, index in sortArr
+                                      if index !== 0
+                                        span.bg-label-secondary &nbsp;&nbsp;|&nbsp;&nbsp;
+                                      li.sorting__item
+                                        a.sorting__item-link.bg-label-secondary(href=`?sort=${sortItem.code}` class=`${sortItem.code === sortCode ? "bg-label-primary fw-bold" : ""}`)=sortItem.title
+                                //- END: Sort link section
+                            //- END: Top button collections
+                            //- BEGIN: Data table
+                            .table-responsive
+                              table.table.table-hover.table-striped.mb-0(style="min-width: 1300px;")
+                                thead
+                                  tr
+                                    th.text-center(scope='col' style="width: 80px;") 번호
+                                    th(scope='col' style="width: 200px;") 상태
+                                    th(scope='col' style="width: 200px;") 회원 아이디
+                                    th(scope='col' style="width: 200px;") UID
+                                    th(scope='col' style="width: 150px;") 거래소이름(한글)
+                                    th(scope='col' style="width: 150px;") 거래소이름(영어)
+                                    th(scope='col' style="width: 160px;") 신청일
+                                    th(scope='col' style="width: 160px;") 수정일
+                                tbody
+                                  each item, index in adminItems
+                                    tr
+                                      td.text-center(scope='col')
+                                        span.font-weight-bold=`${(index + 1) + (paginate.page - 1) * limit}`
+                                      td.ellipsis__td(scope='col')
+                                        if item.status === "pending"
+                                          button.status__process-btn.btn.btn-success.waves-effect.waves-light(style="padding: 2px 10px;" type="button" data-status="approved" data-id=item._id) 승인
+                                          button.status__process-btn.btn.btn-danger.waves-effect.waves-light(style="margin-left: 5px; padding: 2px 10px;" type="button" data-status="rejected" data-id=item._id) 거절
+                                        else
+                                          if item.status === "approved"
+                                            .processed__status.text-primary(style="font-weight: 600;") 승인
+                                          else
+                                            .processed__status.text-danger(style="font-weight: 600;") 거절
+                                      td.ellipsis__td(scope='col')=item.userID ? item.userID.userID : "탈퇴 회원"
+                                      td.ellipsis__td(scope='col')=item.uidID.uid
+                                      td.ellipsis__td(scope='col')=item.exchangeID.nameKo
+                                      td.ellipsis__td(scope='col')=item.exchangeID.nameEn
+                                      td(scope='col')=dateFormatYMDHm(item.createdAt)
+                                      td(scope='col')=dateFormatYMDHm(item.updatedAt)
+                            //- END: Data table
+                      //- END: Basic Tables
+                      //- BEGIN: Pagination
+                      #pagination__flex
+                        if adminItems.length !== 0
+                          nav(aria-label="Page navigation")
+                            ul.pagination
+                              li.page-item.first
+                                a.page-link.waves-effect(href=`?page=1&limit=${limit}` aria-label="First")
+                                  i.ti.ti-chevrons-left.ti-xs
+                              li.page-item.prev
+                                a.page-link.waves-effect(href=paginate.href(true) aria-label="Previous")
+                                  i.ti.ti-chevron-left.ti-xs
+                              each page in pages
+                                if paginate.page === page.number
+                                  li.page-item.active(aria-current='page')
+                                    a.page-link.waves-effect(href=page.url)=page.number
+                                else
+                                  li.page-item
+                                    a.page-link.waves-effect(href=page.url)=page.number
+                              li.page-item.next
+                                a.page-link.waves-effect(href=`${paginate.hasNextPages(pageCount) ? paginate.href() : ""}` aria-label="Next")
+                                  i.ti.ti-chevron-right.ti-xs
+                              li.page-item.last
+                                a.page-link.waves-effect(href=`?page=${pageCount}&limit=${limit}` aria-label="Last")
+                                  i.ti.ti-chevrons-right.ti-xs
+                      //- END: Pagination
+                //- END: Content
+              //- END: Content wrapper
+            //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS

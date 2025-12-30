@@ -1,0 +1,221 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      if crudType === "create" || crudType === "update"
+        .admin__form-page#admin__exchangeForm-page
+          .layout-wrapper.layout-content-navbar
+            .layout-container
+              //- BEGIN: Sidebar menu
+              include ../partials/adminSidebar
+              //- END: Sidebar menu
+              //- BEGIN: Layout container
+              .layout-page
+                //- BEGIN: Navbar
+                include ../partials/adminNavbar
+                //- END: Navbar
+                //- BEGIN: Content wrapper
+                .content-wrapper
+                  //- BEGIN: Content
+                  .container-xxl.flex-grow-1.container-p-y
+                    h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} ${updateBool ? "수정" : "등록"}`
+                    .row
+                      .col-12.col-lg-7
+                        .card
+                          .card-body
+                            form.browser-default-validation.admin__form#exchangeForm(enctype="multipart/form-data" method="POST")
+                              input(type="hidden" name="itemID" value=`${updateBool ? adminItem._id : ""}` readonly required)
+                              .mb-2
+                                label.form-label.fw-bold(for="logo-img") 로고
+                                #preview__logo-img(data-img=adminItem.logo)
+                                  if updateBool
+                                    img.img-fluid.d-flex.mt-0.mb-0.mr-auto.my-4(src=adminItem.logo style="width: 100%; width: 150px; height: 150px; border-radius: 50%;")
+                                  else
+                                    img.img-fluid.d-flex.mt-0.mb-0.mr-auto.my-4(src="" style="width: 100%; width: 150px; height: 150px; border-radius: 50%;")
+                                label.form-label.text-danger.fw-bold [권장 사이즈: 150px * 150px]
+                                if updateBool
+                                  h6.text-danger.mb-2.fw-bold.guide__heading 선택하지 않으면 이전 데이터로 유지합니다.&nbsp;
+                                  input#logo-img.form-control(type="file" name="exchangeLogoImg")
+                                else
+                                  input#logo-img.form-control(type="file" name="exchangeLogoImg" required)
+                              .mb-2
+                                label.form-label.fw-bold(for="thumbnail-img") 썸네일
+                                #preview__thumbnail-img(data-img=adminItem.thumbnail)
+                                  if updateBool
+                                    img.img-fluid.d-flex.mt-0.mb-0.mr-auto.my-4(src=adminItem.thumbnail style="width: 100%; width: 564px; height: 260px;")
+                                  else
+                                    img.img-fluid.d-flex.mt-0.mb-0.mr-auto.my-4(src="" style="width: 100%; width: 564px; height: 260px;")
+                                label.form-label.text-danger.fw-bold [권장 사이즈: 564px * 260px]
+                                if updateBool
+                                  h6.text-danger.mb-2.fw-bold.guide__heading 선택하지 않으면 이전 데이터로 유지합니다.&nbsp;
+                                  input#thumbnail-img.form-control(type="file" name="exchangeThumbnailImg")
+                                else
+                                  input#thumbnail-img.form-control(type="file" name="exchangeThumbnailImg" required)
+                              .mb-2.row
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#nameKo') 거래소이름(한글)
+                                  input#nameKo.form-control(type='text' name="nameKo" value=`${updateBool ? adminItem.nameKo : ""}` placeholder="거래소이름(한글)을 입력하세요" required)
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#nameEn') 거래소이름(영어)
+                                  if updateBool
+                                    label.form-label.text-danger.fw-bold &nbsp;&nbsp;[수정 불가]
+                                    input#nameEn.form-control(type='text' name="nameEn" value=adminItem.nameEn placeholder="거래소이름(영어)를 입력하세요" required readonly)
+                                  else
+                                    input#nameEn.form-control(type='text' name="nameEn" placeholder="거래소이름(영어)를 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#averagePaybackAmount') 평균 환급 금액(원)
+                                label.form-label.text-danger.fw-bold &nbsp;&nbsp;[서비스 소개 페이지에 노출되는 금액입니다.]
+                                input#averagePaybackAmount.form-control(type='number' name="averagePaybackAmount" value=`${updateBool ? adminItem.averagePaybackAmount : ""}` placeholder="평균 환급 금액을 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#joinLink') 거래소 가입 링크
+                                input#joinLink.form-control(type='text' name="joinLink" value=`${updateBool ? adminItem.joinLink : ""}` placeholder="거래소 가입 링크를 입력하세요" required)
+                              .mb-2.row
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#paybackRate') 테더랩스 페이백율(%)
+                                  input#paybackRate.form-control(type='text' name="paybackRate" value=`${updateBool ? adminItem.paybackRate : ""}` placeholder="테더랩스 페이백율을 입력하세요" required)
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#exchangePaybackRate') 거래소 페이백율(%)
+                                  input#exchangePaybackRate.form-control(type='text' name="exchangePaybackRate" value=`${updateBool ? adminItem.exchangePaybackRate : ""}` placeholder="거래소 페이백율을 입력하세요" required)
+                              .mb-2.row
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#paybackTestCommission') 페이백 테스트 수수료율(%)
+                                  input#paybackTestCommission.form-control(type='text' name="paybackTestCommission" value=`${updateBool ? adminItem.paybackTestCommission : ""}` placeholder="페이백 테스트 수수료율을 입력하세요" required)
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#transactionDiscountRate') 거래 할인율(%)
+                                  input#transactionDiscountRate.form-control(type='text' name="transactionDiscountRate" value=`${updateBool ? adminItem.transactionDiscountRate : ""}` placeholder="거래 할인율을 입력하세요" required)
+                              .mb-2.row
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#normalLimitOrder') 일반 지정가(%)
+                                  input#normalLimitOrder.form-control(type='text' name="normalLimitOrder" value=`${updateBool ? adminItem.normalLimitOrder : ""}` placeholder="일반 지정가를 입력하세요" required)
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#normalMarketOrder') 일반 시장가(%)
+                                  input#normalMarketOrder.form-control(type='text' name="normalMarketOrder" value=`${updateBool ? adminItem.normalMarketOrder : ""}` placeholder="일반 시장가를 입력하세요" required)
+                              .mb-2.row
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#customLimitOrder') 테더랩스 지정가(%)
+                                  input#customLimitOrder.form-control(type='text' name="customLimitOrder" value=`${updateBool ? adminItem.customLimitOrder : ""}` placeholder="테더랩스 지정가를 입력하세요" required)
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#customMarketOrder') 테더랩스 시장가(%)
+                                  input#customMarketOrder.form-control(type='text' name="customMarketOrder" value=`${updateBool ? adminItem.customMarketOrder : ""}` placeholder="테더랩스 시장가를 입력하세요" required)
+                              .mb-2.row
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#youtubeLink') 유튜브 링크
+                                  input#youtubeLink.form-control(type='text' name="youtubeLink" value=`${updateBool ? adminItem.youtubeLink : ""}` placeholder="유튜브 링크를 입력하세요" required)
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#tistoryLink') 티스토리 링크
+                                  input#tistoryLink.form-control(type='text' name="tistoryLink" value=`${updateBool ? adminItem.tistoryLink : ""}` placeholder="티스토리 링크를 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#keyword') 키워드
+                                input#keyword.form-control(type='text' name="keyword" value=`${updateBool ? adminItem.keyword : ""}` placeholder="키워드를 입력하세요" required)
+                              .row.mt-4
+                                .col-12
+                                  a.btn.btn-secondary.waves-effect.waves-light.text-white.me-3(href=adminLink) 뒤로가기
+                                  button.btn.btn-success.waves-effect.waves-float.waves-light(type="submit")=`${updateBool ? "수정" : "등록"}하기`
+                  //- END: Content
+                //- END: Content wrapper
+              //- END: Layout container
+      else if crudType === "detail"
+        .admin__detail-page#admin__exchangeDetail-page
+          .layout-wrapper.layout-content-navbar
+            .layout-container
+              //- BEGIN: Sidebar menu
+              include ../partials/adminSidebar
+              //- END: Sidebar menu
+              //- BEGIN: Layout container
+              .layout-page
+                //- BEGIN: Navbar
+                include ../partials/adminNavbar
+                //- END: Navbar
+                //- BEGIN: Content wrapper
+                .content-wrapper
+                  //- BEGIN: Content
+                  .container-xxl.flex-grow-1.container-p-y
+                    h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} 상세보기`
+                    .row
+                      .col-12
+                        .card
+                          .card-body
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 로고
+                              img.img-fluid.d-flex.mt-0.mb-0.mr-auto.my-4.rounded(src=adminItem.logo style="width: 100%; max-width: 100px;")
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 썸네일
+                              img.img-fluid.d-flex.mt-0.mb-0.mr-auto.my-4.rounded(src=adminItem.thumbnail style="width: 100%; max-width: 100px;")
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 거래소이름(한글)
+                              p.card-text=adminItem.nameKo
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 거래소이름(영어)
+                              p.card-text=adminItem.nameEn
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 평균 환급 금액(원)
+                              p.card-text=`${addComma(adminItem.averagePaybackAmount)}원`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 거래소 가입 링크
+                              p.card-text=adminItem.joinLink
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 테더랩스 페이백율(%)
+                              p.card-text=`${adminItem.paybackRate}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 거래소 페이백율(%)
+                              p.card-text=`${adminItem.exchangePaybackRate}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 페이백 테스트 수수료율(%)
+                              p.card-text=`${adminItem.paybackTestCommission}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 거래 할인율(%)
+                              p.card-text=`${adminItem.transactionDiscountRate}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 일반 지정가(%)
+                              p.card-text=`${adminItem.normalLimitOrder}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 일반 시장가(%)
+                              p.card-text=`${adminItem.normalMarketOrder}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 테더랩스 지정가(%)
+                              p.card-text=`${adminItem.customLimitOrder}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 테더랩스 시장가(%)
+                              p.card-text=`${adminItem.customMarketOrder}%`
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 유튜브 링크
+                              p.card-text=adminItem.youtubeLink
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 티스토리 링크
+                              p.card-text=adminItem.tistoryLink
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 키워드
+                              p.card-text=adminItem.keyword
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 생성일
+                              p.card-text=dateFormatYMDHms(adminItem.createdAt)
+                            .card-body-wrap
+                              h5.card-title.mb-1 수정일
+                              p.card-text=dateFormatYMDHms(adminItem.updatedAt)
+                        .card__bot-btns-wrap.mt-3
+                          a.btn.btn-secondary.waves-effect.waves-light.text-white.me-sm-3(onclick="history.go(-1);") 뒤로가기
+                          a.btn.btn-success.waves-effect.waves-light.text-white(href=`${adminLink}/update?itemID=${adminItem._id}`) 수정하기
+                  //- END: Content
+                //- END: Content wrapper
+              //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    script(src="/assets/vendor/libs/select2/select2.js")
+    script(src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js")
+    script(src="/assets/vendor/libs/moment/moment.js")
+    script(src="/assets/vendor/libs/flatpickr/flatpickr.js")
+    script(src="/assets/vendor/libs/typeahead-js/typeahead.js")
+    script(src="/assets/vendor/libs/tagify/tagify.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave-phone.js")
+    script(src="/assets/vendor/libs/select2/select2.js")
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS
+    script(src="/assets/js/form-validation.js")
+    script(src="/assets/js/form-layouts.js")

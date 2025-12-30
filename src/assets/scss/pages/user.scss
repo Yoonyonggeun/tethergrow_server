@@ -1,0 +1,37 @@
+.user__page#user__page {
+  font-size: 30px;
+  h1 {
+    font-weight: 100;
+  }
+  h2 {
+    font-weight: 200;
+  }
+  h3 {
+    font-weight: 300;
+  }
+  h4 {
+    font-weight: normal;
+  }
+  h5 {
+    font-weight: bold;
+  }
+  h6 {
+    font-weight: 900;
+  }
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+}

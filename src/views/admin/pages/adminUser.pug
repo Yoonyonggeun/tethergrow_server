@@ -1,0 +1,99 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      .admin__page#admin__user-page
+        .layout-wrapper.layout-content-navbar
+          .layout-container
+            //- BEGIN: Sidebar menu
+            include ../partials/adminSidebar
+            //- END: Sidebar menu
+            //- BEGIN: Layout container
+            .layout-page
+              //- BEGIN: Navbar
+              include ../partials/adminNavbar
+              //- END: Navbar
+              //- BEGIN: Content wrapper
+              .content-wrapper
+                //- BEGIN: Content
+                .container-xxl.flex-grow-1.container-p-y
+                  h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} 관리`
+                    span.text-muted 내용이 보이지 않을 시 좌우로 스크롤 해보세요.
+                  .row
+                    .content-body
+                      //- BEGIN: Basic Tables
+                      #basic-table.row
+                        .col-12
+                          .card(style="overflow: scroll;")
+                            //- BEGIN: Data table
+                            .table-responsive
+                              table.table.table-hover.table-striped.mb-0(style="min-width: 880px;")
+                                thead
+                                  tr
+                                    th.text-center(scope='col' style="width: 80px;") 번호
+                                    th.text-center(scope='col' style="width: 200px;") 삭제
+                                    th(scope='col' style="width: 200px;") 아이디
+                                    th(scope='col' style="width: 200px;") 승인
+                                    th(scope='col' style="width: 200px;") 가입일
+                                tbody
+                                  each item, index in adminItems
+                                    tr
+                                      td.text-center(scope='col' style="width: 80px;")
+                                        span.font-weight-bold=`${index + 1}`
+                                      td.text-center(scope='col' style="width: 100px;")
+                                        .td__items
+                                          if item.role !== "master"
+                                            a.td__item(href=`${adminLink}/delete/${item._id}` onclick="return confirm('정말 삭제 하시겠습니까?')")
+                                              svg.feather.feather-trash.mr-50(xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                                                polyline(points='3 6 5 6 21 6')
+                                                path(d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2')
+                                          else
+                                            | 삭제 불가
+                                      td(scope='col' style="width: 200px;")=item.userID
+                                      td(scope='col' style="width: 200px;")
+                                        if loggedUser.role === "master"
+                                          //- 승인
+                                          if item.role === "general"
+                                            a.badge.bg-label-success(type='button' href=`${adminLink}/approve/${item._id}` onclick="return confirm('정말 승인 하시겠습니까?')") 승인하기
+                                          else if item.role === "admin"
+                                            | 일반 관리자(승인됨)
+                                          else if item.role === "master"
+                                            | 마스터 관리자
+                                      td(scope='col' style="width: 200px;")=dateFormatYMDHm(item.createdAt)
+                            //- END: Data table
+                      //- END: Basic Tables
+                      //- BEGIN: Pagination
+                      #pagination__flex
+                        if adminItems.length !== 0
+                          nav(aria-label="Page navigation")
+                            ul.pagination
+                              li.page-item.first
+                                a.page-link.waves-effect(href=`?page=1&limit=${limit}` aria-label="First")
+                                  i.ti.ti-chevrons-left.ti-xs
+                              li.page-item.prev
+                                a.page-link.waves-effect(href=paginate.href(true) aria-label="Previous")
+                                  i.ti.ti-chevron-left.ti-xs
+                              each page in pages
+                                if paginate.page === page.number
+                                  li.page-item.active(aria-current='page')
+                                    a.page-link.waves-effect(href=page.url)=page.number
+                                else
+                                  li.page-item
+                                    a.page-link.waves-effect(href=page.url)=page.number
+                              li.page-item.next
+                                a.page-link.waves-effect(href=paginate.href())
+                                  i.ti.ti-chevron-right.ti-xs
+                              li.page-item.last
+                                a.page-link.waves-effect(href=`?page=${pageCount}&limit=${limit}`)
+                                  i.ti.ti-chevrons-right.ti-xs
+                      //- END: Pagination
+                //- END: Content
+              //- END: Content wrapper
+            //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS

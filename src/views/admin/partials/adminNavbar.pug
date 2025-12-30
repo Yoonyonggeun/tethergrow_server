@@ -1,0 +1,23 @@
+nav#layout-navbar.layout-navbar.container-xxl.navbar.navbar-expand-xl.navbar-detached.align-items-center.bg-navbar-theme
+  .layout-menu-toggle.navbar-nav.align-items-xl-center.me-3.me-xl-0.d-xl-none
+    a.nav-item.nav-link.px-0.me-xl-4(href="javascript:void(0)")
+      i.ti.ti-menu-2.ti-sm
+  #navbar-collapse.navbar-nav-right.d-flex.align-items-center
+    ul.navbar-nav.flex-row.align-items-center.ms-auto
+      li.nav-item.me-2.me-xl-0
+        a.nav-link.style-switcher-toggle.hide-arrow(href="javascript:void(0);")
+          i.ti.ti-md
+      li.nav-item.navbar-dropdown.dropdown-user.dropdown
+        a.nav-link.dropdown-toggle.hide-arrow(href="javascript:void(0);" data-bs-toggle="dropdown")
+          i.ti.ti-user-circle.ti-md
+        ul.dropdown-menu.dropdown-menu-end
+          li
+            a.dropdown-item(href=routes.adminChangePW)
+              i.ti.ti-lock.me-2.ti-sm(style="position: relative; left: -1px;")
+              span.align-middle 비밀번호 변경
+          li
+            .dropdown-divider
+          li
+            a.dropdown-item(href=routes.adminSignOut)
+              i.ti.ti-logout.me-2.ti-sm
+              span.align-middle 로그아웃

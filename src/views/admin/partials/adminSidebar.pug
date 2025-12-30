@@ -1,0 +1,77 @@
+aside#layout-menu.layout-menu.menu-vertical.menu.bg-menu-theme
+  .app-brand.demo
+    a.app-brand-link(href=routes.admin)
+      span.app-brand-text.demo.menu-text.fw-bold(style="margin-left: 0 !important;")=`${siteName} 관리자`
+    a.layout-menu-toggle.menu-link.text-large.ms-auto(href="javascript:void(0);")
+      i.ti.menu-toggle-icon.d-none.d-xl-block.ti-sm.align-middle
+      i.ti.ti-x.d-block.d-xl-none.ti-sm.align-middle
+  .menu-inner-shadow
+  ul.menu-inner.py-1#admin__menu-items
+    //- 유저 관리
+    li.menu-header.small.text-uppercase
+      span.menu-header-text 유저 관리
+    //- 유저 관리 > 관리자 계정 관리
+    li.menu-item#admin__menu-user
+      a.menu-link(href=routes.adminUser)
+        i.menu-icon.tf-icons.ti.ti-user-exclamation
+        | 관리자 계정 관리
+    //- 유저 관리 > 일반 유저 관리
+    li.menu-item#admin__menu-normal-user
+      a.menu-link(href=routes.adminNormalUser)
+        i.menu-icon.tf-icons.ti.ti-users
+        | 일반 유저 관리
+    //- 전시 관리
+    li.menu-header.small.text-uppercase
+      span.menu-header-text 전시 관리
+    //- 전시 관리 > 메인 전시 관리
+    li.menu-item#admin__menu-main-exhibition
+      a.menu-link(href=routes.adminMainExhibition)
+        i.menu-icon.tf-icons.ti.ti-layout-grid
+        | 메인 전시 관리
+    //- 전시 관리 > 약관 관리
+    li.menu-item#admin__menu-terms
+      a.menu-link(href=routes.adminTerms)
+        i.menu-icon.tf-icons.ti.ti-checklist
+        | 약관 관리
+    //- 거래소 관리
+    li.menu-header.small.text-uppercase
+      span.menu-header-text 거래소 관리
+    //- 거래소 관리 > 거래소 관리
+    li.menu-item#admin__menu-exchange
+      a.menu-link(href=routes.adminExchange)
+        i.menu-icon.tf-icons.ti.ti-chart-bar
+        | 거래소 관리
+    //- UID 관리
+    li.menu-header.small.text-uppercase
+      span.menu-header-text UID 관리
+    //- UID 관리 > UID 업로드 관리
+    li.menu-item#admin__menu-uid
+      a.menu-link(href=routes.adminUid)
+        i.menu-icon.tf-icons.ti.ti-notes
+        | UID 업로드 관리
+    //- UID 관리 > UID 연동 관리
+    li.menu-item#admin__menu-integration
+      a.menu-link(href=routes.adminIntegration)
+        i.menu-icon.tf-icons.ti.ti-layers-intersect
+        | UID 연동 관리
+    //- 페이백 관리
+    li.menu-header.small.text-uppercase
+      span.menu-header-text 페이백 관리
+    //- 페이백 관리 > 페이백 신청 관리
+    li.menu-item#admin__menu-apply-payback
+      a.menu-link(href=routes.adminApplyPayback)
+        i.menu-icon.tf-icons.ti.ti-wallet
+        | 페이백 신청 관리
+    //- 페이백 관리 > 출금 내역 관리
+    li.menu-item#admin__menu-withdrawal-history
+      a.menu-link(href=routes.adminWithdrawalHistory)
+        i.menu-icon.tf-icons.ti.ti-history
+        | 페이백 출금 내역 관리
+    //- FAQ 관리
+    li.menu-header.small.text-uppercase
+      span.menu-header-text FAQ 관리
+    //- FAQ 관리 > FAQ 관리
+    li.menu-item#admin__menu-faq
+      a.menu-link(href=routes.adminFaq)
+        i.menu-icon.tf-icons.ti.ti-help
+        | FAQ 관리

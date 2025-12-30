@@ -1,0 +1,171 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      .admin__page#admin__faq-page
+        .layout-wrapper.layout-content-navbar
+          .layout-container
+            //- BEGIN: Sidebar menu
+            include ../partials/adminSidebar
+            //- END: Sidebar menu
+            //- BEGIN: Layout container
+            .layout-page
+              //- BEGIN: Navbar
+              include ../partials/adminNavbar
+              //- END: Navbar
+              //- BEGIN: Content wrapper
+              .content-wrapper
+                //- BEGIN: Content
+                .container-xxl.flex-grow-1.container-p-y
+                  h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} 관리`
+                    span.text-muted 내용이 보이지 않을 시 좌우로 스크롤 해보세요.
+                  .row
+                    .content-body
+                      //- BEGIN: Basic Tables
+                      #basic-table.row
+                        .col-12
+                          .card(style="overflow: scroll;")
+                            //- BEGIN: Top button collections
+                            .top__btn-items.card-body.pb-2
+                              .top__btn-items-wrap
+                                //- BEGIN: Search bar section
+                                .top__btn-item.top__btn-item-search
+                                  form.needs-validation(method="GET")
+                                    .input-group
+                                      select#basicSelect.form-control(name="searchKey")
+                                        each option in searchArr
+                                          if option.code === searchKey
+                                            option(value=option.code selected)=option.title
+                                          else
+                                            option(value=option.code)=option.title
+                                      input.form-control(type='search' name="searchValue" placeholder='검색어를 입력하세요...' value=searchValue aria-describedby='button-addon2')
+                                      #button-addon2.input-group-append
+                                        button.btn.btn-dark.waves-effect.search__btn(type="submit") 검색
+                                //- END: Search bar section
+                              .top__btn-items-wrap
+                                //- BEGIN: Excel download button section
+                                .top__btn-item.top__btn-item-excel
+                                  button#excel__download-btn.btn.btn-secondary.buttons-collection.me-2.waves-effect.waves-light(type='button' name=`${adminNameKo}`)
+                                    i.ti.ti-file-export.me-1
+                                    | 엑셀 다운로드
+                                  table#tableData(style='display: none;')
+                                    thead
+                                      tr
+                                        th 번호
+                                        th 제목
+                                        th 카테고리
+                                        th 노출여부
+                                        th 정렬순서
+                                        th 생성일
+                                        th 수정일
+                                    tbody
+                                      each item, index in excelData
+                                        tr
+                                          td=index + 1
+                                          td=item.title
+                                          td=categoryMap[item.category]
+                                          td=item.isVisible ? "노출" : "비노출"
+                                          td=item.order
+                                          td=dateFormatYMDHm(item.createdAt)
+                                          td=dateFormatYMDHm(item.updatedAt)
+                                //- END: Excel download button section
+                                //- BEGIN: Create button section
+                                .top__btn-item.top__btn-item-create
+                                  a.btn.btn-success.waves-effect.waves-float.waves-light(href=`${adminLink}/create`)
+                                    i.ti.ti-plus.me-1
+                                    span=`${adminNameKo} 등록`
+                                //- END: Create button section
+                              .top__btn-items-wrap
+                                //- BEGIN: Delete button section
+                                .top__btn-item.top__btn-item-delete
+                                  button#select__delete-btn.btn.btn-warning.waves-effect.waves-light.me-2(type='button' data-db="faq")
+                                    i.ti.ti-trash.me-1
+                                    | 선택 삭제
+                                //- END: Delete button section
+                              .top__btn-items-wrap
+                                //- BEGIN: Sort link section
+                                .top__btn-item.top__btn-item-sort
+                                  ul.sorting__items
+                                    each sortItem, index in sortArr
+                                      if index !== 0
+                                        span.bg-label-secondary &nbsp;&nbsp;|&nbsp;&nbsp;
+                                      li.sorting__item
+                                        a.sorting__item-link.bg-label-secondary(href=`?sort=${sortItem.code}` class=`${sortItem.code === sortCode ? "bg-label-primary fw-bold" : ""}`)=sortItem.title
+                                //- END: Sort link section
+                            //- END: Top button collections
+                            //- BEGIN: Data table
+                            .table-responsive
+                              table.table.table-hover.table-striped.mb-0(style="min-width: 1200px;")
+                                thead
+                                  tr
+                                    th(scope='col' style="width: 70px;")
+                                      input.form-check-input(type='checkbox' id='checkAll')
+                                    th.text-center(scope='col' style="width: 80px;") 번호
+                                    th.text-center(scope='col' style="width: 100px;") 수정/삭제
+                                    th(scope='col' style="width: 300px;") 제목
+                                    th(scope='col' style="width: 150px;") 카테고리
+                                    th.text-center(scope='col' style="width: 100px;") 노출여부
+                                    th.text-center(scope='col' style="width: 100px;") 정렬순서
+                                    th(scope='col' style="width: 160px;") 생성일
+                                    th(scope='col' style="width: 160px;") 수정일
+                                tbody
+                                  each item, index in adminItems
+                                    tr
+                                      td
+                                        input.form-check-input(type='checkbox' data-id=`${item._id}`)
+                                      td.text-center(scope='col')
+                                        span.font-weight-bold=`${(index + 1) + (paginate.page - 1) * limit}`
+                                      td.text-center(scope='col')
+                                        .td__items
+                                          a.td__item(href=`${adminLink}/update?itemID=${item._id}`)
+                                            i.ti.ti-edit
+                                          a.td__item(href=`${adminLink}/delete?itemID=${item._id}` onclick="return confirm('정말 삭제 하시겠습니까?')")
+                                            i.ti.ti-trash
+                                      td.ellipsis__td(scope='col')=item.title
+                                      td(scope='col')=categoryMap[item.category]
+                                      td.text-center(scope='col')
+                                        if item.isVisible
+                                          span.badge.bg-label-success 노출
+                                        else
+                                          span.badge.bg-label-secondary 비노출
+                                      td.text-center(scope='col')=item.order
+                                      td(scope='col')=dateFormatYMDHm(item.createdAt)
+                                      td(scope='col')=dateFormatYMDHm(item.updatedAt)
+                            //- END: Data table
+                      //- END: Basic Tables
+                      //- BEGIN: Pagination
+                      #pagination__flex
+                        if adminItems.length !== 0
+                          nav(aria-label="Page navigation")
+                            ul.pagination
+                              li.page-item.first
+                                a.page-link.waves-effect(href=`?page=1&limit=${limit}` aria-label="First")
+                                  i.ti.ti-chevrons-left.ti-xs
+                              li.page-item.prev
+                                a.page-link.waves-effect(href=paginate.href(true) aria-label="Previous")
+                                  i.ti.ti-chevron-left.ti-xs
+                              each page in pages
+                                if paginate.page === page.number
+                                  li.page-item.active(aria-current='page')
+                                    a.page-link.waves-effect(href=page.url)=page.number
+                                else
+                                  li.page-item
+                                    a.page-link.waves-effect(href=page.url)=page.number
+                              li.page-item.next
+                                a.page-link.waves-effect(href=`${paginate.hasNextPages(pageCount) ? paginate.href() : ""}` aria-label="Next")
+                                  i.ti.ti-chevron-right.ti-xs
+                              li.page-item.last
+                                a.page-link.waves-effect(href=`?page=${pageCount}&limit=${limit}` aria-label="Last")
+                                  i.ti.ti-chevrons-right.ti-xs
+                      //- END: Pagination
+                //- END: Content
+              //- END: Content wrapper
+            //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS
+

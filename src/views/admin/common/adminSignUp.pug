@@ -1,0 +1,43 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      .admin__page#admin__signUp-page
+        .authentication-wrapper.authentication-cover.authentication-bg
+          .authentication-inner.row
+            .d-none.d-lg-flex.col-lg-7.p-0
+              .auth-cover-bg.auth-cover-bg-color.d-flex.justify-content-center.align-items-center
+                img.img-fluid.my-5.auth-illustration(src="/assets/img/illustrations/auth-register-illustration-light.png" alt="auth-register-cover" data-app-light-img="illustrations/auth-register-illustration-light.png" data-app-dark-img="illustrations/auth-register-illustration-dark.png")
+                img.platform-bg(src="/assets/img/illustrations/bg-shape-image-light.png" alt="auth-register-cover" data-app-light-img="illustrations/bg-shape-image-light.png" data-app-dark-img="illustrations/bg-shape-image-dark.png")
+            .d-flex.col-12.col-lg-5.align-items-center.p-sm-5.p-4
+              .w-px-400.mx-auto
+                h3.mb-4.fw-bold 관리자 회원가입 🚀
+                form.mb-3(action=routes.adminSignUp method="POST")
+                  .mb-3
+                    label.form-label(for="userID") 아이디
+                    input#userID.form-control(type="text" name="userID" placeholder="아이디" autofocus tabindex="1" required)
+                  .mb-3.form-password-toggle
+                    label.form-label(for="password") 비밀번호
+                    .input-group.input-group-merge
+                      input#password.form-control(type="password" name="password" placeholder="············" aria-describedby="password" tabindex="2" autocomplete required)
+                      span.input-group-text.cursor-pointer
+                        i.ti.ti-eye-off
+                  .mb-3.form-password-toggle
+                    label.form-label(for="password2") 비밀번호 확인
+                    .input-group.input-group-merge
+                      input#password2.form-control(type="password" name="password2" placeholder="············" aria-describedby="password" tabindex="3" autocomplete required)
+                      span.input-group-text.cursor-pointer
+                        i.ti.ti-eye-off
+                  button.btn.btn-primary.d-grid.w-100(type="submit" tabindex="4") 회원가입
+                p.text-center
+                  span 이미 계정이 있으신가요?
+                  a(href=routes.home)
+                    span &nbsp;로그인 하러 가기
+        //- END: Content
+    //- BEGIN: Repeated scripts
+    include ../partials/adminScripts
+    //- END: Repeated scripts
+    //- BEGIN: Page JS
+    script(src='/assets/js/pages-auth.js')
+    //- END: Page JS

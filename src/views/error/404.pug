@@ -1,0 +1,22 @@
+extends ../layouts/adminMain
+
+block content
+  body
+    //- main.admin__main
+    .container-xxl
+      .misc-wrapper
+        h2.mb-4.mt-4 Page Not Found :(
+        p.mb-0.mx-2 죄송합니다 😖
+        p.mb-0.mx-2 요청하신 페이지를 찾을 수 없습니다
+        p.mb-3.mx-2 입력하신 주소를 다시 확인해주시기 바랍니다
+        a.btn.btn-primary.mb-4(href=routes.home) 홈으로
+        .mt-4
+          img.img-fluid(src="/assets/img/illustrations/page-misc-error.png" alt="page-misc-error" width="225")
+    .container-fluid.misc-bg-wrapper
+      img(src="/assets/img/illustrations/bg-shape-image-light.png" alt="page-misc-error" data-app-light-img="illustrations/bg-shape-image-light.png" data-app-dark-img="illustrations/bg-shape-image-dark.png")
+    //- Repeated scripts
+    include ../admin/partials/adminScripts
+    //- Vendors JS
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS

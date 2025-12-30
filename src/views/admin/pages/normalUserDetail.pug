@@ -1,0 +1,89 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      .admin__detail-page#admin__normalUserDetail-page
+        .layout-wrapper.layout-content-navbar
+          .layout-container
+            //- BEGIN: Sidebar menu
+            include ../partials/adminSidebar
+            //- END: Sidebar menu
+            //- BEGIN: Layout container
+            .layout-page
+              //- BEGIN: Navbar
+              include ../partials/adminNavbar
+              //- END: Navbar
+              //- BEGIN: Content wrapper
+              .content-wrapper
+                //- BEGIN: Content
+                .container-xxl.flex-grow-1.container-p-y
+                  h4.fw-bold.py-3.mb-3.admin__page-title=`유저 데이터 상세보기`
+                  .row
+                    .col-12
+                      .card
+                        .card-body
+                          .row
+                            .col-12
+                              .card-body-wrap.mb-4
+                                h5.card-title.mb-1 아이디(이메일 주소)
+                                p.card-text=adminItem.userID
+                              .card-body-wrap.mb-4
+                                h5.card-title.mb-1 추천인 코드
+                                p.card-text.mb-0(style="display: flex; align-items: center;")=`내 추천인 코드: ${adminItem.referral.code}`
+                                p.card-text.mb-0=`내 추천인 코드로 가입한 회원수: ${adminItem.referral.count}`
+                              .card-body-wrap.mb-4
+                                h5.card-title.mb-1 회원가입 시 사용한 추천인 코드
+                                p.card-text=`${adminItem.referralCode ? adminItem.referralCode : '없음'}`
+                              .card-body-wrap.mb-4
+                                h5.card-title.mb-1 연동 UID
+                                if integrationData.length !== 0
+                                  each integration in integrationData
+                                    .mb-2
+                                      p.card-text.mb-0(style="font-weight: bold;")=`[${integration.exchangeID.nameKo} / ${integration.uidID.uid} / ${integration.status === "pending" ? "승인대기" : integration.status === "approved" ? "승인" : "거절"}]`
+                                      p.card-text.mb-0(style="display: flex; align-items: center;")=`누적 페이백 금액: ${addComma(toFixed2(integration.uidID.payback.accumulate))} USDT`
+                                      p.card-text.mb-0=`받은 페이백 금액: ${addComma(toFixed2(integration.uidID.payback.receive))} USDT`
+                                      p.card-text=`남은 페이백 금액: ${addComma(toFixed2(integration.uidID.payback.accumulate - integration.uidID.payback.receive))} USDT`
+                                else
+                                  p.card-text=`연동 UID가 없습니다.`
+                              .card-body-wrap.mb-4
+                                h5.card-title.mb-1 대표 연동 거래소/UID
+                                if adminItem.representativeIntegrationID
+                                  p.card-text=`${adminItem.representativeIntegrationID.exchangeID.nameKo} - ${adminItem.representativeIntegrationID.uidID.uid}`
+                                else
+                                  p.card-text=`대표 연동 거래소/UID가 없습니다.`
+                              .card-body-wrap.mb-4
+                                h5.card-title.mb-1 리워드 정보
+                                p.card-text.mb-0=`총 리워드: ${addComma(adminItem.couponEventPayback.total)} USDT`
+                                p.card-text.mb-0=`받은 리워드: ${addComma(adminItem.couponEventPayback.receive)} USDT`
+                                p.card-text=`남은 리워드: ${addComma(adminItem.couponEventPayback.remain)} USDT`
+                              button#reset__password-btn.btn.btn-primary.waves-effect.waves-light.mb-1(type='button' data-id=adminItem.id) 비밀번호 재설정
+                              .reset__password-wrap
+                                .card-body-wrap.mb-4
+                                  h5.card-title#reset__password-title.mb-1(style="display: none;") 재설정된 비밀번호
+                                  p.card-text#reset__password-text
+                      .card__bot-btns-wrap.mt-3
+                        a.btn.btn-secondary.waves-effect.waves-light.text-white.me-sm-3(onclick="history.go(-1);") 뒤로가기
+                //- END: Content
+              //- END: Content wrapper
+            //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    script(src="/assets/vendor/libs/select2/select2.js")
+    script(src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js")
+    script(src="/assets/vendor/libs/moment/moment.js")
+    script(src="/assets/vendor/libs/flatpickr/flatpickr.js")
+    script(src="/assets/vendor/libs/typeahead-js/typeahead.js")
+    script(src="/assets/vendor/libs/tagify/tagify.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave-phone.js")
+    script(src="/assets/vendor/libs/select2/select2.js")
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS
+    script(src="/assets/js/form-validation.js")
+    script(src="/assets/js/form-layouts.js")

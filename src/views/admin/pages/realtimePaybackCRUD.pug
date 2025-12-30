@@ -1,0 +1,64 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      if crudType === "create" || crudType === "update"
+        .admin__form-page#admin__realtimePaybackForm-page
+          .layout-wrapper.layout-content-navbar
+            .layout-container
+              //- BEGIN: Sidebar menu
+              include ../partials/adminSidebar
+              //- END: Sidebar menu
+              //- BEGIN: Layout container
+              .layout-page
+                //- BEGIN: Navbar
+                include ../partials/adminNavbar
+                //- END: Navbar
+                //- BEGIN: Content wrapper
+                .content-wrapper
+                  //- BEGIN: Content
+                  .container-xxl.flex-grow-1.container-p-y
+                    h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} ${updateBool ? "수정" : "등록"}`
+                    .row
+                      .col-12.col-lg-7
+                        .card
+                          .card-body
+                            form.browser-default-validation.admin__form(method="POST")
+                              input(type="hidden" name="itemID" value=`${updateBool ? adminItem._id : ""}` readonly required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#name') 아이디
+                                input#name.form-control(type='text' name="name" value=`${updateBool ? adminItem.name : ""}` placeholder="아이디를 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#amount') 금액(테더)
+                                input#amount.form-control(type='number' name="amount" value=`${updateBool ? adminItem.amount : ""}` placeholder="금액을 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for="#date") 날짜
+                                input#date.form-control(type="date" name="date" value=`${updateBool ? dateFormatYMD(adminItem.date) : ""}` placeholder="날짜를 입력하세요" required)
+                              .row.mt-4
+                                .col-12
+                                  a.btn.btn-secondary.waves-effect.waves-light.text-white.me-3(onclick="history.go(-1);") 뒤로가기
+                                  button.btn.btn-success.waves-effect.waves-float.waves-light(type="submit")=`${updateBool ? "수정" : "등록"}하기`
+                  //- END: Content
+                //- END: Content wrapper
+              //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    script(src="/assets/vendor/libs/select2/select2.js")
+    script(src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js")
+    script(src="/assets/vendor/libs/moment/moment.js")
+    script(src="/assets/vendor/libs/flatpickr/flatpickr.js")
+    script(src="/assets/vendor/libs/typeahead-js/typeahead.js")
+    script(src="/assets/vendor/libs/tagify/tagify.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave-phone.js")
+    script(src="/assets/vendor/libs/select2/select2.js")
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS
+    script(src="/assets/js/form-validation.js")
+    script(src="/assets/js/form-layouts.js")

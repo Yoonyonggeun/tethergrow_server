@@ -1,0 +1,146 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      if crudType === "create" || crudType === "update"
+        .admin__form-page#admin__eventForm-page
+          .layout-wrapper.layout-content-navbar
+            .layout-container
+              //- BEGIN: Sidebar menu
+              include ../partials/adminSidebar
+              //- END: Sidebar menu
+              //- BEGIN: Layout container
+              .layout-page
+                //- BEGIN: Navbar
+                include ../partials/adminNavbar
+                //- END: Navbar
+                //- BEGIN: Content wrapper
+                .content-wrapper
+                  //- BEGIN: Content
+                  .container-xxl.flex-grow-1.container-p-y
+                    h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} ${updateBool ? "수정" : "등록"}`
+                    .row
+                      .col-12.col-lg-7
+                        .card
+                          .card-body
+                            form.browser-default-validation.admin__form(method="POST" enctype="multipart/form-data")
+                              input(type="hidden" name="itemID" value=`${updateBool ? adminItem._id : ""}` readonly required)
+                              .mb-2
+                                label.form-label.fw-bold(for="thumbnail-img") 썸네일
+                                label.form-label.text-danger.fw-bold &nbsp;&nbsp;[권장 사이즈: 564px * 260px]
+                                if updateBool
+                                  h6.text-danger.mb-2.fw-bold.guide__heading 선택하지 않으면 이전 데이터로 유지합니다.&nbsp;
+                                    a.text-danger(href=adminItem.thumbnail target="_blank") [이전 이미지 보기]
+                                  input#thumbnail-img.form-control(type="file" name="eventThumbnailImg")
+                                else
+                                  input#thumbnail-img.form-control(type="file" name="eventThumbnailImg" required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#exchangeID') 거래소
+                                select.form-select#exchangeID(name="exchangeID" required)
+                                  if updateBool
+                                    each exchange in exchanges
+                                      if adminItem.exchangeID._id.toString() === exchange._id.toString()
+                                        option(value=exchange._id selected)=exchange.nameKo
+                                      else
+                                        option(value=exchange._id)=exchange.nameKo
+                                  else
+                                    each exchange in exchanges
+                                      option(value=exchange._id)=exchange.nameKo
+                              .mb-2
+                                label.form-label.fw-bold(for='#title') 제목
+                                input#title.form-control(type='text' name="title" value=`${updateBool ? adminItem.title : ""}` placeholder="제목을 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#description') 설명
+                                textarea#description.form-control(name="description" placeholder="설명을 입력하세요" rows="10" required)=`${updateBool ? adminItem.description : ""}`
+                              .mb-2
+                                label.form-label.fw-bold(for='#link') 이벤트 링크
+                                input#link.form-control(type='text' name="link" value=`${updateBool ? adminItem.link : ""}` placeholder="이벤트 링크를 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for="#startDate") 이벤트 시작일
+                                input#startDate.form-control(type="date" name="startDate" value=`${updateBool ? dateFormatYMD(adminItem.startDate) : ""}` placeholder="이벤트 시작일을 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for="#endDate") 이벤트 종료일
+                                input#endDate.form-control(type="date" name="endDate" value=`${updateBool ? dateFormatYMD(adminItem.endDate) : ""}` placeholder="이벤트 종료일을 입력하세요" required)
+                              .row.mt-4
+                                .col-12
+                                  a.btn.btn-secondary.waves-effect.waves-light.text-white.me-3(onclick="history.go(-1);") 뒤로가기
+                                  button.btn.btn-success.waves-effect.waves-float.waves-light(type="submit")=`${updateBool ? "수정" : "등록"}하기`
+                  //- END: Content
+                //- END: Content wrapper
+              //- END: Layout container
+      else if crudType === "detail"
+        //- FIXME: 페이지에 맞게 id 수정
+        .admin__detail-page#admin__eventDetail-page
+          .layout-wrapper.layout-content-navbar
+            .layout-container
+              //- BEGIN: Sidebar menu
+              include ../partials/adminSidebar
+              //- END: Sidebar menu
+              //- BEGIN: Layout container
+              .layout-page
+                //- BEGIN: Navbar
+                include ../partials/adminNavbar
+                //- END: Navbar
+                //- BEGIN: Content wrapper
+                .content-wrapper
+                  //- BEGIN: Content
+                  .container-xxl.flex-grow-1.container-p-y
+                    h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} 상세보기`
+                    .row
+                      .col-12
+                        .card
+                          .card-body
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 썸네일
+                              img.img-fluid.d-flex.mt-0.mb-0.mr-auto.my-4.rounded(src=adminItem.thumbnail style="width: 100%; max-width: 400px;")
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 거래소
+                              p.card-text=adminItem.exchangeID.nameKo
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 제목
+                              p.card-text=adminItem.title
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 설명
+                              p.card-text(style="white-space: pre-wrap;")=adminItem.description
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 이벤트 링크
+                              p.card-text=adminItem.link
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 이벤트 시작일
+                              p.card-text=dateFormatYMD(adminItem.startDate)
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 이벤트 종료일
+                              p.card-text=dateFormatYMD(adminItem.endDate)
+                            .card-body-wrap.mb-4
+                              h5.card-title.mb-1 생성일
+                              p.card-text=dateFormatYMDHms(adminItem.createdAt)
+                            .card-body-wrap
+                              h5.card-title.mb-1 수정일
+                              p.card-text=dateFormatYMDHms(adminItem.updatedAt)
+                        .card__bot-btns-wrap.mt-3
+                          a.btn.btn-secondary.waves-effect.waves-light.text-white.me-sm-3(onclick="history.go(-1);") 뒤로가기
+                          a.btn.btn-success.waves-effect.waves-light.text-white(href=`${adminLink}/update?itemID=${adminItem._id}`) 수정하기
+                  //- END: Content
+                //- END: Content wrapper
+              //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    script(src="/assets/vendor/libs/select2/select2.js")
+    script(src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js")
+    script(src="/assets/vendor/libs/moment/moment.js")
+    script(src="/assets/vendor/libs/flatpickr/flatpickr.js")
+    script(src="/assets/vendor/libs/typeahead-js/typeahead.js")
+    script(src="/assets/vendor/libs/tagify/tagify.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave-phone.js")
+    script(src="/assets/vendor/libs/select2/select2.js")
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS
+    script(src="/assets/js/form-validation.js")
+    script(src="/assets/js/form-layouts.js")

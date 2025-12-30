@@ -1,0 +1,29 @@
+@import "config/_variables.scss";
+@import "config/reset.scss";
+@import "config/utils.scss";
+@import "main.scss";
+
+@import "./error/404.scss";
+
+@import "./pages/home.scss";
+@import "./pages/user.scss";
+@import "./pages/admin.scss";
+
+@import "./partials/header.scss";
+@import "./partials/footer.scss";
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+}
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+}

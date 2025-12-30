@@ -1,0 +1,83 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      if crudType === "create" || crudType === "update"
+        .admin__form-page#admin__faqForm-page
+          .layout-wrapper.layout-content-navbar
+            .layout-container
+              //- BEGIN: Sidebar menu
+              include ../partials/adminSidebar
+              //- END: Sidebar menu
+              //- BEGIN: Layout container
+              .layout-page
+                //- BEGIN: Navbar
+                include ../partials/adminNavbar
+                //- END: Navbar
+                //- BEGIN: Content wrapper
+                .content-wrapper
+                  //- BEGIN: Content
+                  .container-xxl.flex-grow-1.container-p-y
+                    h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} ${updateBool ? "수정" : "등록"}`
+                    .row
+                      .col-12.col-lg-7
+                        .card
+                          .card-body
+                            form.browser-default-validation.admin__form(method="POST")
+                              input(type="hidden" name="itemID" value=`${updateBool ? adminItem._id : ""}` readonly required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#title') 제목
+                                input#title.form-control(type='text' name="title" value=`${updateBool ? adminItem.title : ""}` placeholder="제목을 입력하세요" required)
+                              .mb-2
+                                label.form-label.fw-bold(for='#content') 내용
+                                textarea#content.form-control(type='text' name="content" rows="15" placeholder="내용을 입력하세요 (마크다운 형식 지원)" required)=updateBool ? adminItem.content : ""
+                              .mb-2.row
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#category') 카테고리
+                                  select#category.form-select(name="category" required)
+                                    option(value="service" selected=updateBool && adminItem.category === "service") 서비스/컨셉
+                                    option(value="security" selected=updateBool && adminItem.category === "security") 보안/API
+                                    option(value="ai" selected=updateBool && adminItem.category === "ai") AI 분석
+                                    option(value="pricing" selected=updateBool && adminItem.category === "pricing") 페이백/요금제
+                                    option(value="etc" selected=updateBool && adminItem.category === "etc") 기타
+                                .col-md-6
+                                  label.form-label.fw-bold(for='#order') 정렬 순서
+                                    span.text-muted.fw-normal (같은 카테고리 내)
+                                  input#order.form-control(type='number' name="order" value=`${updateBool ? adminItem.order : ""}` placeholder="자동 설정 (0 입력 시)" min="0")
+                                  small.text-muted 저장 시 해당 카테고리 내에서 자동으로 재정렬됩니다.
+                              .mb-2
+                                .form-check.form-switch
+                                  if updateBool && adminItem.isVisible
+                                    input#isVisible.form-check-input(type='checkbox' name="isVisible" checked)
+                                  else
+                                    input#isVisible.form-check-input(type='checkbox' name="isVisible")
+                                  label.form-check-label.fw-bold(for='#isVisible') 노출 여부
+                              .row.mt-4
+                                .col-12
+                                  a.btn.btn-secondary.waves-effect.waves-light.text-white.me-3(href=adminLink) 뒤로가기
+                                  button.btn.btn-success.waves-effect.waves-float.waves-light(type="submit")=`${updateBool ? "수정" : "등록"}하기`
+                  //- END: Content
+                //- END: Content wrapper
+              //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    script(src="/assets/vendor/libs/select2/select2.js")
+    script(src="/assets/vendor/libs/bootstrap-select/bootstrap-select.js")
+    script(src="/assets/vendor/libs/moment/moment.js")
+    script(src="/assets/vendor/libs/flatpickr/flatpickr.js")
+    script(src="/assets/vendor/libs/typeahead-js/typeahead.js")
+    script(src="/assets/vendor/libs/tagify/tagify.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js")
+    script(src="/assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave.js")
+    script(src="/assets/vendor/libs/cleavejs/cleave-phone.js")
+    script(src="/assets/vendor/libs/select2/select2.js")
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS
+    script(src="/assets/js/form-validation.js")
+    script(src="/assets/js/form-layouts.js")
+

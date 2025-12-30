@@ -1,0 +1,42 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      .admin__page#admin__changePW-page
+        .authentication-wrapper.authentication-cover.authentication-bg
+          .authentication-inner.row
+            .d-none.d-lg-flex.col-lg-7.p-0
+              .auth-cover-bg.auth-cover-bg-color.d-flex.justify-content-center.align-items-center
+                img.img-fluid.my-5.auth-illustration(src="/assets/img/illustrations/auth-reset-password-illustration-light.png" alt="auth-reset-password-cover" data-app-light-img="illustrations/auth-reset-password-illustration-light.png" data-app-dark-img="illustrations/auth-reset-password-illustration-dark.png")
+                img.platform-bg(src="/assets/img/illustrations/bg-shape-image-light.png" alt="auth-reset-password-cover" data-app-light-img="illustrations/bg-shape-image-light.png" data-app-dark-img="illustrations/bg-shape-image-dark.png")
+            .d-flex.col-12.col-lg-5.align-items-center.p-4.p-sm-5
+              .w-px-400.mx-auto
+                h3.mb-1.fw-bold 관리자 비밀번호 변경 🔒
+                p.mb-4 관리자 아이디&nbsp;
+                  span.fw-bold=loggedUser.userID
+                form.mb-3(action=routes.adminChangePW method='POST')
+                  .mb-3.form-password-toggle
+                    label.form-label(for="password") 새로운 비밀번호
+                    .input-group.input-group-merge
+                      input#password.form-control(type="password" name="newPassword" placeholder="············" aria-describedby="password" autofocus tabindex="1" autocomplete required)
+                      span.input-group-text.cursor-pointer
+                        i.ti.ti-eye-off
+                  .mb-3.form-password-toggle
+                    label.form-label(for="passwords") 새로운 비밀번호 확인
+                    .input-group.input-group-merge
+                      input#passwords.form-control(type="password" name="newPassword1" placeholder="············" aria-describedby="password" tabindex="2" autocomplete required)
+                      span.input-group-text.cursor-pointer
+                        i.ti.ti-eye-off
+                  button.btn.btn-primary.d-grid.w-100.mb-3(type="submit") 비밀번호 변경
+                  .text-center
+                    a(href=routes.adminUser)
+                      i.ti.ti-chevron-left.ti-xs(style="position: relative; top: -1px;")
+                      | 관리자 페이지로
+        //-END: Content
+    //- BEGIN: Repeated scripts
+    include ../partials/adminScripts
+    //- END: Repeated scripts
+    //-BEGIN: Page JS
+    script(src='/assets/js/pages-auth.js')
+    //-END: Page JS

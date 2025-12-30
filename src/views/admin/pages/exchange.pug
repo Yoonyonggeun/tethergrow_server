@@ -1,0 +1,131 @@
+extends ../../layouts/adminMain
+
+block content
+  body
+    main.admin__main
+      .admin__page#admin__exchange-page
+        .layout-wrapper.layout-content-navbar
+          .layout-container
+            //- BEGIN: Sidebar menu
+            include ../partials/adminSidebar
+            //- END: Sidebar menu
+            //- BEGIN: Layout container
+            .layout-page
+              //- BEGIN: Navbar
+              include ../partials/adminNavbar
+              //- END: Navbar
+              //- BEGIN: Content wrapper
+              .content-wrapper
+                //- BEGIN: Content
+                .container-xxl.flex-grow-1.container-p-y
+                  h4.fw-bold.py-3.mb-3.admin__page-title=`${adminNameKo} 관리`
+                    span.text-muted 내용이 보이지 않을 시 좌우로 스크롤 해보세요.
+                  .row
+                    .content-body
+                      //- BEGIN: Basic Tables
+                      #basic-table.row
+                        .col-12
+                          .card(style="overflow: scroll;")
+                            //- BEGIN: Top button collections
+                            .top__btn-items.card-body.pb-2
+                              .top__btn-items-wrap
+                                //- BEGIN: Excel download button section
+                                .top__btn-item.top__btn-item-excel
+                                  button#excel__download-btn.btn.btn-secondary.buttons-collection.waves-effect.waves-light(type='button' name=`${adminNameKo}`)
+                                    i.ti.ti-file-export.me-1
+                                    | 엑셀 다운로드
+                                  table#tableData(style='display: none;')
+                                    thead
+                                      tr
+                                        th 번호
+                                        th 로고
+                                        th 거래소이름(한글)
+                                        th 거래소이름(영어)
+                                        th 테더랩스 페이백율
+                                        th 거래소 페이백율
+                                        th 일반 지정가
+                                        th 일반 시장가
+                                        th 테더랩스 지정가
+                                        th 테더랩스 시장가
+                                        th 생성일
+                                        th 수정일
+                                    tbody
+                                      each item, index in excelData
+                                        tr
+                                          td=index + 1
+                                          td=item.logo
+                                          td=item.nameKo
+                                          td=item.nameEn
+                                          td=`${item.paybackRate}%`
+                                          td=`${item.exchangePaybackRate}%`
+                                          td=`${item.normalLimitOrder}%`
+                                          td=`${item.normalMarketOrder}%`
+                                          td=`${item.customLimitOrder}%`
+                                          td=`${item.customMarketOrder}%`
+                                          td=dateFormatYMDHm(item.createdAt)
+                                          td=dateFormatYMDHm(item.updatedAt)
+                                //- END: Excel download button section
+                                //- BEGIN: Create button section
+                                //- .top__btn-item.top__btn-item-create
+                                //-   a.btn.btn-success.waves-effect.waves-float.waves-light(href=`${adminLink}/create`)
+                                //-     i.ti.ti-plus.me-1
+                                //-     span=`${adminNameKo} 등록`
+                                //- END: Create button section
+                            //- END: Top button collections
+                            //- BEGIN: Data table
+                            .table-responsive
+                              table.table.table-hover.table-striped.mb-0(style="min-width: 1880px;")
+                                thead
+                                  tr
+                                    th.text-center(scope='col' style="width: 100px;") 순서변경
+                                    th.text-center(scope='col' style="width: 80px;") 번호
+                                    th.text-center(scope='col' style="width: 100px;") 수정
+                                    th(scope='col' style="width: 100px;") 로고
+                                    th(scope='col' style="width: 150px;") 거래소이름(한글)
+                                    th(scope='col' style="width: 150px;") 거래소이름(영어)
+                                    th(scope='col' style="width: 160px;") 테더랩스 페이백율
+                                    th(scope='col' style="width: 160px;") 거래소 페이백율
+                                    th(scope='col' style="width: 140px;") 일반 지정가
+                                    th(scope='col' style="width: 140px;") 일반 시장가
+                                    th(scope='col' style="width: 140px;") 테더랩스 지정가
+                                    th(scope='col' style="width: 140px;") 테더랩스 시장가
+                                    th(scope='col' style="width: 160px;") 생성일
+                                    th(scope='col' style="width: 160px;") 수정일
+                                tbody.list-group.list-group-flush(id="handle-list-2" style="display: revert; width: 100%;" data-model="Exchange")
+                                  each item, index in adminItems
+                                    tr.list-group-item(style="display: revert; width: 100%;" data-id=item._id)
+                                      td.text-center(scope='col')
+                                        i.ti.ti-menu-2.drag-handle(style="cursor: grab;")
+                                      td.text-center(scope='col')
+                                        span.font-weight-bold=index + 1
+                                      td.text-center(scope='col')
+                                        .td__items
+                                          a.td__item(href=`${adminLink}/update?itemID=${item._id}`)
+                                            i.ti.ti-edit
+                                      td(scope='col')
+                                        img(src=item.logo width="80%" style="margin: 0 auto; aspect-ratio: 1 / 1; border-radius: 50%;")
+                                      td.ellipsis__td(scope='col')
+                                        a.td__link(href=`${adminLink}/detail?itemID=${item._id}`)=item.nameKo
+                                          i.ti.ti-external-link
+                                      td.ellipsis__td(scope='col')=item.nameEn
+                                      td.ellipsis__td(scope='col')=`${item.paybackRate}%`
+                                      td.ellipsis__td(scope='col')=`${item.exchangePaybackRate}%`
+                                      td.ellipsis__td(scope='col')=`${item.normalLimitOrder}%`
+                                      td.ellipsis__td(scope='col')=`${item.normalMarketOrder}%`
+                                      td.ellipsis__td(scope='col')=`${item.customLimitOrder}%`
+                                      td.ellipsis__td(scope='col')=`${item.customMarketOrder}%`
+                                      td(scope='col')=dateFormatYMDHm(item.createdAt)
+                                      td(scope='col')=dateFormatYMDHm(item.updatedAt)
+                            //- END: Data table
+                      //- END: Basic Tables
+                //- END: Content
+              //- END: Content wrapper
+            //- END: Layout container
+    //- Repeated scripts
+    include ../partials/adminScripts
+    //- Vendors JS
+    script(src="/assets/vendor/libs/sortablejs/sortable.js")
+    //- Main JS
+    script(src="/assets/js/main.js")
+    //- Page JS
+    script(src="/assets/js/extended-ui-drag-and-drop.js")
