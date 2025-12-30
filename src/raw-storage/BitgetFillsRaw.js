@@ -1,12 +1,12 @@
-// src/raw-storage/bitget-orders-raw.js
-// Bitget Orders Raw Storage Model
-// API 응답을 변환 없이 그대로 저장
+// src/raw-storage/BitgetFillsRaw.js
+// Bitget Fills Raw Storage Model
+// Bitget 체결(raw fill) 응답을 변환 없이 저장하여 백필/진단 파이프라인에서 재활용하기 위한 스키마
 
 import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-const BitgetOrdersRawSchema = new Schema(
+const BitgetFillsRawSchema = new Schema(
   {
     // API 응답 원본 데이터 (변환 없이 저장)
     rawData: {
@@ -30,11 +30,11 @@ const BitgetOrdersRawSchema = new Schema(
       index: true,
     }, // "USDT-FUTURES" | "COIN-FUTURES" | "USDC-FUTURES"
     // 인덱싱을 위한 주요 필드 (조회 성능 향상)
-    orderId: {
+    tradeId: {
       type: String,
       index: true,
     },
-    clientOid: {
+    orderId: {
       type: String,
       index: true,
     },
@@ -49,14 +49,14 @@ const BitgetOrdersRawSchema = new Schema(
   },
   {
     timestamps: true,
-    collection: "bitget_orders_raw",
+    collection: "bitget_fills_raw",
   }
 );
 
 // 복합 인덱스
-BitgetOrdersRawSchema.index({ apiKeyHash: 1, fetchedAt: -1 });
-BitgetOrdersRawSchema.index({ apiKeyHash: 1, symbol: 1, cTime: -1 });
+BitgetFillsRawSchema.index({ apiKeyHash: 1, fetchedAt: -1 });
+BitgetFillsRawSchema.index({ apiKeyHash: 1, symbol: 1, cTime: -1 });
 
-const model = mongoose.model("BitgetOrdersRaw", BitgetOrdersRawSchema);
+const model = mongoose.model("BitgetFillsRaw", BitgetFillsRawSchema);
 
 export default model;
