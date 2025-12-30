@@ -5,8 +5,18 @@ import crypto from "crypto";
 import BitgetFillsRaw from "./bitget-fills-raw";
 import BitgetOrdersRaw from "./bitget-orders-raw";
 import BitgetPositionsRaw from "./bitget-positions-raw";
+import OkxFillsRaw from "./okx-fills-raw";
+import OkxOrdersRaw from "./okx-orders-raw";
+import OkxPositionsRaw from "./okx-positions-raw";
 
-export { BitgetFillsRaw, BitgetOrdersRaw, BitgetPositionsRaw };
+export {
+  BitgetFillsRaw,
+  BitgetOrdersRaw,
+  BitgetPositionsRaw,
+  OkxFillsRaw,
+  OkxOrdersRaw,
+  OkxPositionsRaw,
+};
 
 /**
  * Raw 데이터 저장 헬퍼 함수
@@ -114,6 +124,107 @@ export async function saveRawData({
 
     if (newPositions.length > 0) {
       results.positions = await BitgetPositionsRaw.insertMany(newPositions, {
+        ordered: false,
+      });
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Save OKX raw data with deduplication
+ * @param {Object} params
+ * @param {string} params.apiKeyHash
+ * @param {Array} params.fills
+ * @param {Array} params.orders
+ * @param {Array} params.positions
+ * @param {string} [params.instType]
+ * @returns {Promise<Object>}
+ */
+export async function saveOkxRawData({
+  apiKeyHash,
+  fills = [],
+  orders = [],
+  positions = [],
+  instType = "SWAP",
+}) {
+  const hash =
+    apiKeyHash && apiKeyHash.length === 64 && /^[a-f0-9]+$/i.test(apiKeyHash)
+      ? apiKeyHash
+      : crypto.createHash("sha256").update(apiKeyHash).digest("hex");
+
+  const results = { fills: [], orders: [], positions: [] };
+
+  if (fills.length > 0) {
+    const fillDocs = fills.map((fill) => ({
+      rawData: fill,
+      apiKeyHash: hash,
+      instType,
+      instId: fill.instId,
+      tradeId: fill.tradeId,
+      ordId: fill.ordId,
+      ts: fill.ts || fill.fillTime,
+    }));
+
+    const existingTradeIds = await OkxFillsRaw.distinct("tradeId", {
+      apiKeyHash: hash,
+    });
+    const newFills = fillDocs.filter(
+      (doc) => doc.tradeId && !existingTradeIds.includes(doc.tradeId)
+    );
+
+    if (newFills.length > 0) {
+      results.fills = await OkxFillsRaw.insertMany(newFills, {
+        ordered: false,
+      });
+    }
+  }
+
+  if (orders.length > 0) {
+    const orderDocs = orders.map((order) => ({
+      rawData: order,
+      apiKeyHash: hash,
+      instType,
+      instId: order.instId,
+      ordId: order.ordId,
+      clOrdId: order.clOrdId,
+      cTime: order.cTime,
+    }));
+
+    const existingOrdIds = await OkxOrdersRaw.distinct("ordId", {
+      apiKeyHash: hash,
+    });
+    const newOrders = orderDocs.filter(
+      (doc) => doc.ordId && !existingOrdIds.includes(doc.ordId)
+    );
+
+    if (newOrders.length > 0) {
+      results.orders = await OkxOrdersRaw.insertMany(newOrders, {
+        ordered: false,
+      });
+    }
+  }
+
+  if (positions.length > 0) {
+    const positionDocs = positions.map((position) => ({
+      rawData: position,
+      apiKeyHash: hash,
+      instType,
+      instId: position.instId,
+      posId: position.posId,
+      ts: position.ts,
+    }));
+
+    const existingPosIds = await OkxPositionsRaw.distinct("posId", {
+      apiKeyHash: hash,
+    });
+    const newPositions = positionDocs.filter(
+      (doc) => doc.posId && !existingPosIds.includes(doc.posId)
+    );
+
+    if (newPositions.length > 0) {
+      results.positions = await OkxPositionsRaw.insertMany(newPositions, {
         ordered: false,
       });
     }

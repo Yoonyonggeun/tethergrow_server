@@ -21,6 +21,7 @@ import {
   getFaqAll,
 } from "../controllers/apiController";
 import { postBitgetAnalyze } from "../controllers/bitgetController";
+import { postOkxAnalyze } from "../controllers/okxController";
 import { checkApiKey, onlyUser } from "../middlewares";
 
 const apiRouter = express.Router();
@@ -91,5 +92,10 @@ apiRouter.post(`${routes.integration}/apply`, onlyUser, postApplyIntegration);
 // @ 공개 API [06]
 // - Bitget 90일 진단 분석 [01]
 apiRouter.post(`${routes.public}${routes.analysis}`, postBitgetAnalyze);
+// - OKX 90일 진단 분석 [02]
+apiRouter.post(
+  `${routes.public}${routes.analysis}${routes.okxApi}`,
+  postOkxAnalyze
+);
 
 export default apiRouter;

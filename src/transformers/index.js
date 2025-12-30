@@ -13,6 +13,18 @@ import {
   transformPositionToResult,
   transformPositionsToResults,
 } from "./position-to-result";
+import {
+  transformOkxFillToAction,
+  transformOkxFillsToActions,
+} from "./okx-fill-to-action";
+import {
+  transformOkxOrderToContext,
+  transformOkxOrdersToContexts,
+} from "./okx-order-to-context";
+import {
+  transformOkxPositionToResult,
+  transformOkxPositionsToResults,
+} from "./okx-position-to-result";
 
 // Export individual transformers
 export {
@@ -22,6 +34,12 @@ export {
   transformOrdersToContexts,
   transformPositionToResult,
   transformPositionsToResults,
+  transformOkxFillToAction,
+  transformOkxFillsToActions,
+  transformOkxOrderToContext,
+  transformOkxOrdersToContexts,
+  transformOkxPositionToResult,
+  transformOkxPositionsToResults,
 };
 
 /**
@@ -30,16 +48,26 @@ export {
  * @param {Array} rawData.fills - Raw fill 데이터
  * @param {Array} rawData.orders - Raw order 데이터
  * @param {Array} rawData.positions - Raw position 데이터
+ * @param {string} [exchange] - "bitget" | "okx"
  * @returns {Object} - { actions, contexts, results }
  */
 export function transformAllToUnified({
   fills = [],
   orders = [],
   positions = [],
+  exchange = "bitget",
 }) {
+  const isOkx = exchange === "okx";
+
   return {
-    actions: transformFillsToActions(fills),
-    contexts: transformOrdersToContexts(orders),
-    results: transformPositionsToResults(positions),
+    actions: isOkx
+      ? transformOkxFillsToActions(fills)
+      : transformFillsToActions(fills),
+    contexts: isOkx
+      ? transformOkxOrdersToContexts(orders)
+      : transformOrdersToContexts(orders),
+    results: isOkx
+      ? transformOkxPositionsToResults(positions)
+      : transformPositionsToResults(positions),
   };
 }

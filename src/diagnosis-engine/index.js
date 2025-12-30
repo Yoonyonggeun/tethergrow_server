@@ -2,12 +2,16 @@
 // Bitget 90D Diagnosis Engine - Main Entry Point
 
 import crypto from "crypto";
-import { fetchAllBitgetData } from "../fetchers";
+import { fetchAllBitgetData, fetchAllOkxData } from "../fetchers";
 import {
   saveRawData,
   BitgetFillsRaw,
   BitgetOrdersRaw,
   BitgetPositionsRaw,
+  saveOkxRawData,
+  OkxFillsRaw,
+  OkxOrdersRaw,
+  OkxPositionsRaw,
 } from "../raw-storage";
 import { transformAllToUnified } from "../transformers";
 import { fetchOHLCVData, calculateMarketStatesForTimestamps } from "../market";
@@ -169,5 +173,137 @@ export async function generateBitget90DDiagnosis({
     return report;
   } catch (error) {
     throw new Error(`Diagnosis generation failed: ${error.message}`);
+  }
+}
+
+/**
+ * OKX 90일 진단 리포트 생성
+ * @param {Object} params
+ * @param {string} params.apiKey
+ * @param {string} params.secretKey
+ * @param {string} params.passphrase
+ * @param {string} [params.instType] - OKX instrument type (e.g., "SWAP")
+ * @param {string} [params.instId]
+ * @param {boolean} [params.saveRawDataFlag]
+ * @param {Function} [params.onProgress]
+ * @returns {Promise<Object>}
+ */
+export async function generateOkx90DDiagnosis({
+  apiKey,
+  secretKey,
+  passphrase,
+  instType = "SWAP",
+  instId,
+  saveRawDataFlag = true,
+  onProgress,
+}) {
+  try {
+    const apiKeyHash = hashApiKey(apiKey);
+
+    let rawData = { fills: [], orders: [], positions: [] };
+
+    if (saveRawDataFlag) {
+      if (onProgress) onProgress("fetching", "저장된 데이터를 조회하는 중...");
+      const existingFills = await OkxFillsRaw.find({ apiKeyHash }).lean();
+      const existingOrders = await OkxOrdersRaw.find({ apiKeyHash }).lean();
+      const existingPositions = await OkxPositionsRaw.find({ apiKeyHash }).lean();
+
+      rawData = {
+        fills: existingFills.map((f) => f.rawData),
+        orders: existingOrders.map((o) => o.rawData),
+        positions: existingPositions.map((p) => p.rawData),
+      };
+
+      const totalCount =
+        rawData.fills.length + rawData.orders.length + rawData.positions.length;
+
+      if (totalCount === 0) {
+        if (onProgress)
+          onProgress("fetching", "OKX API에서 데이터를 가져오는 중...");
+        rawData = await fetchAllOkxData({
+          apiKey,
+          secretKey,
+          passphrase,
+          instType,
+          instId,
+          onProgress: (type, count) => {
+            if (onProgress) onProgress("fetching", `${type}: ${count}개 수집됨`);
+          },
+        });
+      }
+    } else {
+      if (onProgress) onProgress("fetching", "OKX API에서 데이터를 가져오는 중...");
+      rawData = await fetchAllOkxData({
+        apiKey,
+        secretKey,
+        passphrase,
+        instType,
+        instId,
+        onProgress: (type, count) => {
+          if (onProgress) onProgress("fetching", `${type}: ${count}개 수집됨`);
+        },
+      });
+    }
+
+    if (saveRawDataFlag) {
+      if (onProgress) onProgress("saving", "Raw 데이터 저장 중...");
+      await saveOkxRawData({
+        apiKeyHash,
+        fills: rawData.fills,
+        orders: rawData.orders,
+        positions: rawData.positions,
+        instType,
+      });
+    }
+
+    if (onProgress) onProgress("transforming", "Unified 모델로 변환 중...");
+    const { actions, contexts, results } = transformAllToUnified({
+      fills: rawData.fills,
+      orders: rawData.orders,
+      positions: rawData.positions,
+      exchange: "okx",
+    });
+
+    if (onProgress) onProgress("market", "시장 데이터 수집 중...");
+    const symbols = [...new Set(results.map((r) => r.symbol))].slice(0, 2);
+    const klinesData = {};
+    for (const symbol of symbols) {
+      try {
+        klinesData[symbol] = await fetchOHLCVData({ symbol, days: 90 });
+      } catch (error) {
+        console.warn(`Failed to fetch OHLCV for ${symbol}:`, error.message);
+      }
+    }
+
+    if (onProgress) onProgress("market", "시장 상태 계산 중...");
+    const marketStates = [];
+    for (const symbol of Object.keys(klinesData)) {
+      const klines = klinesData[symbol]["5m"] || [];
+      const timestamps = results
+        .filter((r) => r.symbol === symbol)
+        .map((r) => r.closeTime);
+      if (timestamps.length > 0) {
+        const states = calculateMarketStatesForTimestamps({
+          klines,
+          timestamps,
+          symbol,
+        });
+        marketStates.push(...states);
+      }
+    }
+
+    if (onProgress) onProgress("generating", "진단 리포트 생성 중...");
+    const report = generateDiagnosisReport({
+      actions,
+      contexts,
+      results,
+      marketStates,
+      klines: klinesData[symbols[0]]?.["5m"],
+    });
+
+    if (onProgress) onProgress("complete", "완료!");
+    return report;
+  } catch (error) {
+    throw new Error(`OKX diagnosis generation failed: ${error.message}`);
   }
 }
